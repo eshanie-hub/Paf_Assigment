@@ -3,7 +3,30 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        progress: 0,
+        deadline: ''
+    });
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('/api/courses', formData);
+            alert('New course added!');
+            handleClose();
+            refreshData();
+        } catch (error) {
+            console.error('Error adding course:', error);
+            alert('Failed to add course. Please try again.');
+        }
+    };
 
     return (
         <Modal show={show} onHide={handleClose}>
