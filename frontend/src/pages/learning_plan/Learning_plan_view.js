@@ -6,6 +6,39 @@ export const LearningPlanView = () => {
     const [state, setState] = useState({
         LearningPlan: []
       })
+
+      useEffect(() => {
+        axios.get("http://localhost:8080/api/learningPlan").then(res => {
+          if(res.data){
+            setState({
+              LearningPlan: res.data
+            })
+          }
+        })
+      }, [state]);
+    
+      const onDelete = (id) => {
+        const confirmDelete = window.confirm(
+          "Are you sure you want to delete this plan?"
+        );
+        if (confirmDelete) {
+          axios
+            .delete(`http://localhost:8080/api/learningPlan/${id}`)
+            .then((res) => {
+              alert("Deleted successfully");
+              // Optionally, you can update the state after deletion
+              setState((prevState) => ({
+                LearningPlan: prevState.LearningPlan.filter(
+                  (item) => item.id !== id
+                ),
+              }));
+            })
+            .catch((error) => {
+              console.error("Error deleting plan:", error);
+              alert("Failed to delete plan");
+            });
+        }
+      };
     return (
         <div className='p-2'>
           
