@@ -9,7 +9,28 @@ export const  EventManagementView = () => {
   const [latestEvents, setLatestEvents] = useState([]);  //Initializes the state as an empty array by useState(), latestEvents holds the list of events
 
 
-  
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/events');
+      
+        const today = new Date(); 
+
+        // Sort events by eventDate ascending and get only the latest 3
+        const sorted = res.data
+          .filter(e => new Date(e.eventDate) >= today) // only future or today
+          .sort((a, b) =>   new Date(a.eventDate) - new Date(b.eventDate))  // ascending: soonest first
+          .slice(0, 5);
+
+        setLatestEvents(sorted);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   
   return (
     <div className='p-2'>
