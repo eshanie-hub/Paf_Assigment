@@ -3,7 +3,49 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 const LearningProgressUpdate = ({ show, handleClose, courseId, refreshData }) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        progress: 0,
+        deadline: '',
+    });
 
+    useEffect(() => {
+        if (show && courseId) {
+            axios.get(`/api/courses/${courseId}`)
+                .then(res => {
+                    const { title, description, progress, deadline } = res.data;
+                    setFormData({
+                        title,
+                        description,
+                        progress,
+                        deadline,
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching course data:', error);
+                    alert('Failed to load course data. Please try again.');
+                });
+        }
+    }, [courseId, show]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.put(`/api/courses/${courseId}`, formData);
+            alert("Course updated successfully!");
+            handleClose();
+            refreshData(); // Optional: refresh parent table/view
+        } catch (error) {
+            console.error('Error updating course:', error);
+            alert('Failed to update course. Please try again.');
+        }
+    };
 
     return (
         <Modal show={show} onHide={handleClose}>
