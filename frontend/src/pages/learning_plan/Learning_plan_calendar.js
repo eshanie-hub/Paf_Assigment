@@ -65,7 +65,7 @@ export const LearningPlanCalendar = () => {
             });
             setEvents(formattedEvents);
           });
-      }, [events]);
+      }, []);
     
       const handleSelectEvent = (event, e) => {
         setSelectedEvent(event);
