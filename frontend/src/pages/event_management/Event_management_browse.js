@@ -4,7 +4,64 @@ import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaClock ,FaExternalLinkAlt} fro
 import axios from 'axios';
 
 export const EventManagementBrowse = () => {
- 
+  const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [sortBy, setSortBy] = useState('');
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await axios.get('http://localhost:8080/api/events');
+        setEvents(res.data);
+        setFilteredEvents(res.data);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    filterAndSort(category, sortBy);
+    setVisibleCount(6);  // reset load count
+  };
+
+  const handleSortChange = (e) => {
+    const sort = e.target.value;
+    setSortBy(sort);
+    filterAndSort(selectedCategory, sort);
+    setVisibleCount(6);  // reset load count
+  };
+
+  const handleReset = () => {
+    setSelectedCategory('');
+    setSortBy('');
+    setFilteredEvents(events);
+    setVisibleCount(6);
+  };
+
+  const filterAndSort = (category, sort) => {
+    let updated = [...events];
+
+    if (category) {
+      updated = updated.filter((event) =>
+        event.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+
+    if (sort === 'date') {
+      updated.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
+    } else if (sort === 'title') {
+      updated.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    setFilteredEvents(updated);
+  };
 
   return (
     <div className="p-2">
