@@ -25,7 +25,88 @@ ChartJS.register(
 );
 
 const LearningProgressView = () => {
+    const [courses, setCourses] = useState([]);
+    const [paintingStats, setPaintingStats] = useState([]);
+    const [totalPaintings, setTotalPaintings] = useState(0);
+    const [totalCertificates, setTotalCertificates] = useState(0);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showAddModal, setShowAddModal] = useState(false); // NEW
+    const [selectedCourseId, setSelectedCourseId] = useState(null);
 
+    useEffect(() => {
+        fetchCourses();
+        fetchPaintingStats();
+        fetchTotalPaintings();
+        fetchCompletedCourses();
+    }, []);
+
+    const fetchCourses = async () => {
+        const res = await axios.get("/api/courses");
+        setCourses(res.data);
+    };
+
+    const fetchCompletedCourses = async () => {
+        const res = await axios.get("/api/courses/completed-count");
+        setTotalCertificates(res.data);
+    };
+
+    const deleteCourse = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this course?");
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(`/api/courses/${id}`);
+            fetchCourses();
+        } catch (error) {
+            console.error("Failed to delete course:", error);
+            alert("Error deleting course. Please try again.");
+        }
+    };
+
+
+    const fetchPaintingStats = async () => {
+        const res = await axios.get("/api/painting-stats");
+        setPaintingStats(res.data);
+    };
+
+    const fetchTotalPaintings = async () => {
+        const res = await axios.get("/api/painting-stats/total");
+        setTotalPaintings(res.data);
+    };
+
+    const deletePaintingStat = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this painting stat?");
+        if (!confirmDelete) return;
+
+        try {
+            await axios.delete(`/api/painting-stats/${id}`);
+            fetchPaintingStats();
+        } catch (error) {
+            console.error("Failed to delete painting stat:", error);
+            alert("Error deleting painting stat. Please try again.");
+        }
+    };
+
+
+    const handleEditClick = (id) => {
+        setSelectedCourseId(id);
+        setShowEditModal(true);
+    };
+
+    const handleAddClick = () => {
+        setShowAddModal(true);
+    };
+
+    const chartData = {
+        labels: paintingStats.map((stat) => stat.paintingType),
+        datasets: [
+            {
+                label: "Painting Count",
+                data: paintingStats.map((stat) => stat.paintingCount),
+                backgroundColor: "green",
+            },
+        ],
+    };
 
     return (
         <div className="container mt-4">
