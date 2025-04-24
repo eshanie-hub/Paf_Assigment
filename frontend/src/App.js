@@ -2,9 +2,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
 import PostForm from './pages/post_management/Post_Form';
-import PostManagementCreate from './pages/post_management/Post_management_create';
+import PostManagementCreate from './pages/post_management/post_management_create';
 import PostManagementView from './pages/post_management/Post_management_view';
-import PostManagementDelete from './pages/post_management/Post_management_delete';
+import PostManagementDelete from './pages/post_management/post_management_delete';
+import PostManagementUpdate from './pages/post_management/Post_management_update';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
           <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
           <Route path="/pages/post_management/Post_management_delete/:id" element={<PostManagementDelete />} />
+          <Route path="/pages/post_management/Post_management_update/:id" element={<PostManagementUpdate />} />
 
         </Routes>
       </div>
