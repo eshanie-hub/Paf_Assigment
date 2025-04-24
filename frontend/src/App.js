@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
 import PostForm from './pages/post_management/Post_Form';
+import PostManagementCreate from './pages/post_management/Post_management_create';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
 
           {/* post management routes */}
           <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
+          <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
 
         </Routes>
       </div>
