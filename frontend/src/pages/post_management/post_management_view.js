@@ -16,7 +16,64 @@ import {
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const PostManagementView = () => {
-  
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState(null);
+  const navigate = useNavigate();
+
+  const IMAGE_HEIGHT = 300;
+  const primaryColor = '#2d3436';
+  const textColor = '#2d3436';
+
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('http://localhost:8080/api/posts');
+      setPosts(response.data);
+    } catch (err) {
+      setError({
+        message: err.response?.data?.message || 
+                err.message || 
+                'Failed to fetch posts. Please try again.'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const handleLike = async (postId) => {
+    try {
+      await axios.post(`http://localhost:8080/api/posts/${postId}/like`);
+      fetchPosts();
+    } catch (err) {
+      setError({
+        message: 'Failed to like post.'
+      });
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      setIsLoading(true);
+      await axios.delete(`http://localhost:8080/api/posts/${id}`);
+      fetchPosts();
+      setShowDeleteConfirm(false);
+    } catch (err) {
+      setError({
+        message: err.response?.data?.message || 
+                err.message || 
+                'Failed to delete post. Please try again.'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Container className="my-5" style={{ maxWidth: '800px' }}>
