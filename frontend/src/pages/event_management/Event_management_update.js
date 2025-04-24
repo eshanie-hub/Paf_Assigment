@@ -5,6 +5,151 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 export const EventManagementUpdate = () => {  
+  const { id } = useParams();
+  const navigate = useNavigate();
+  
+  // Add these fields to initial state
+const [eventData, setEventData] = useState({
+  title: '',
+  description: '',
+  eventDate: '',
+  eventTime: '',
+  type: '',
+  location: '',
+  link: '',
+  category: '',
+  registrationFee: '',
+  maxParticipants: '',
+  instructorName: '',
+  instructorBio: '',
+});
+
+  
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/events/${id}`);
+        setEventData(res.data);
+      } catch (error) {
+        console.error('Error fetching event:', error);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+  
+    setEventData((prev) => {
+      // If type is changing, clear the opposite field
+      if (name === 'type') {
+        return {
+          ...prev,
+          [name]: value,
+          location: value === 'Physical' ? prev.location : '',
+          link: value === 'Online' ? prev.link : '',
+        };
+      }
+  
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+  
+
+  const handleUpdate = async () => {
+    const {
+      title, description, eventDate, eventTime, location, link,
+      category, registrationFee, maxParticipants,
+      instructorName, instructorBio, type
+    } = eventData;
+  
+    if (
+      !title || !description || !eventDate || !eventTime ||
+      !category || !registrationFee || !maxParticipants ||
+      !instructorName || !instructorBio || !type
+    ) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'All fields are required!',
+      });
+    }
+  
+    if (type === 'Online' && (!link || link.trim() === '')) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Event link is required for online events.',
+      });
+    }
+  
+    if (type === 'Physical' && (!location || location.trim() === '')) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Event location is required for physical events.',
+      });
+    }
+  
+    if (title.length > 60) {
+      return Swal.fire({ icon: 'error', title: 'Title should be 60 characters or less.' });
+    }
+  
+    if (description.length < 50) {
+      return Swal.fire({ icon: 'error', title: 'Description must be at least 50 characters.' });
+    }
+  
+    if (instructorBio.length < 30) {
+      return Swal.fire({ icon: 'error', title: 'Bio must be at least 30 characters long.' });
+    }
+  
+    if (!/^[A-Za-z.\s]+$/.test(instructorName)) {
+      return Swal.fire({ icon: 'error', title: 'Instructor name must contain only letters and spaces.' });
+    }
+  
+    if (isNaN(registrationFee)) {
+      return Swal.fire({ icon: 'error', title: 'Registration fee must be a number.' });
+    }
+  
+    if (isNaN(maxParticipants)) {
+      return Swal.fire({ icon: 'error', title: 'Participants must be a number.' });
+    }
+  
+    const today = new Date().toISOString().split("T")[0];
+    if (eventDate < today) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Event date must be today or in the future.',
+      });
+    }
+  
+    const payload = {
+      ...eventData,
+      registrationFee: Number(registrationFee),
+      maxParticipants: Number(maxParticipants),
+      location: eventData.type === 'Physical' ? eventData.location : '',
+  link: eventData.type === 'Online' ? eventData.link : '',
+    };
+  
+    try {
+      await axios.put(`http://localhost:8080/api/events/${id}`, payload);
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated!',
+        text: 'Event updated successfully!',
+        timer: 2000,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+      navigate(`/pages/event_management/Event_management_single_view/${id}`);
+    } catch (error) {
+      Swal.fire({ icon: 'error', title: 'Update Failed', text: 'Please try again.' });
+    }
+  };
   
   
 
