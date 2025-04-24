@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
+import PostForm from './pages/post_management/Post_Form';
 
 function App() {
   return (
@@ -13,6 +14,11 @@ function App() {
       <Navbar />
       <div className="p-3 flex-grow-1"  style={{backgroundColor: "#FFF5F7"}}>
         <Routes>
+          
+
+          {/* post management routes */}
+          <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
+
         </Routes>
       </div>
       </div>

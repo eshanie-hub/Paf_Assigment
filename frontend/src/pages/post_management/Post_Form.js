@@ -11,7 +11,52 @@ import {
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const PostForm = ({
- 
+  postText,
+  setPostText,
+  mediaFiles,
+  setMediaFiles,
+  existingMedia,
+  setExistingMedia,
+  isLoading,
+  handleSubmit,
+  handleRemoveExistingMedia,
+  handleRemoveNewMedia,
+  visibility,
+  setVisibility,
+  editingPost,
+  onCancel,
+  validationErrors
+}) => {
+  const [mediaPreviews, setMediaPreviews] = useState([]);
+
+  const buttonColor = '#F4C3D2';
+  const textColor = '#2d3436';
+  const primaryColor = '#2d3436';
+
+  useEffect(() => {
+    // Generate previews for new files
+    const newPreviews = mediaFiles.map(file => {
+      const preview = URL.createObjectURL(file);
+      return {
+        type: file.type.startsWith('image/') ? 'image' : 'video',
+        url: preview,
+        file,
+        isNew: true
+      };
+    });
+
+    // Combine with existing media
+    const combined = [
+      ...existingMedia.map(media => ({
+        type: media.mediaType,
+        url: media.url,
+        id: media.id,
+        isNew: false
+      })),
+      ...newPreviews
+    ];
+
+    setMediaPreviews(combined);
 
     // Cleanup function
     return () => {
