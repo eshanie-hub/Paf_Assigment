@@ -11,6 +11,132 @@ export const  EventManagementSingleView = () => {
 
   
 
+  const { id } = useParams(); // get event ID from URL
+  const [event, setEvent] = useState(null);
+  const navigate = useNavigate();  //used to redirect on update
+  // Assuming userId is stored in localStorage  
+  // const userId = localStorage.getItem('userId');
+  
+  
+  const userId = 3; // For testing purposes, replace with actual user ID from localStorage
+
+  const [isRegistered, setIsRegistered] = useState(false);
+
+
+
+useEffect(() => {
+  const fetchSingleEvent = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/api/events/${id}`);
+      setEvent(res.data);
+    } catch (err) {
+      console.error("Error fetching single event:", err);
+    }
+  };
+
+  fetchSingleEvent();
+}, [id]);
+
+// When event is fetched, check if user is registered
+useEffect(() => {
+  if (event && event.registeredUsers) {
+    setIsRegistered(event.registeredUsers.includes(userId));
+  }
+}, [event, userId]);
+
+
+  if (!event) return <p className="p-3">Loading event...</p>; //Prevents the page from crashing while event is still null
+
+  const isFull = event.registeredUsers.length >= event.maxParticipants;
+
+
+  const handleCopyLink = () => {               //Handle Share
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl)
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Link copied!',
+          text: 'The event link has been copied to your clipboard.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      })
+      .catch(() => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops!',
+          text: 'Failed to copy the link.',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+        });
+      });
+  };
+
+  const handleDelete = async () => {
+    const confirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'This event will be permanently deleted!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (confirm.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:8080/api/events/${id}`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'The event has been deleted.',
+          timer: 2000,
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
+        // Redirect back to browse page or homepage
+        window.location.href = '/pages/event_management/Event_management_browse';
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to delete the event.',
+        });
+      }
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const res = await axios.put(`http://localhost:8080/api/events/${id}/register?userId=${userId}`);
+      setEvent(res.data);
+      setIsRegistered(true);
+    } catch (err) {
+      console.error("Registration failed", err);
+      Swal.fire({ icon: 'error', title: 'Could not register.' });
+    }
+  };
+  
+  const handleUnregister = async () => {
+    try {
+      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`);
+      setEvent(res.data);
+      setIsRegistered(false);
+    } catch (err) {
+      console.error("Unregister failed", err);
+      Swal.fire({ icon: 'error', title: 'Could not unregister.' });
+    }
+  };
+  
   
   
   
