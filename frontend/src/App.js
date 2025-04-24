@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
 import PostForm from './pages/post_management/Post_Form';
 import PostManagementCreate from './pages/post_management/Post_management_create';
+import PostManagementView from './pages/post_management/Post_management_view';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           
 
           {/* post management routes */}
+          <Route path="/" element={<PostManagementView />} />
           <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
           <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
 
