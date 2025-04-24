@@ -4,6 +4,7 @@ import { Navbar } from "./components/Navbar";
 import PostForm from './pages/post_management/Post_Form';
 import PostManagementCreate from './pages/post_management/Post_management_create';
 import PostManagementView from './pages/post_management/Post_management_view';
+import PostManagementDelete from './pages/post_management/Post_management_delete';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/" element={<PostManagementView />} />
           <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
           <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
+          <Route path="/pages/post_management/Post_management_delete/:id" element={<PostManagementDelete />} />
 
         </Routes>
       </div>
