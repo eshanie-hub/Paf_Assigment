@@ -7,7 +7,151 @@ import { useNavigate } from 'react-router-dom';
 
 
 export const EventManagementCreate = () => {
+  const [eventData, setEventData] = useState({  //eventData is a state object that holds all the form fields
+    title: '',
+    description: '',
+    eventDate: '',
+    eventTime: '',
+    location: '',
+    category: '',
+    registrationFee: '',
+    maxParticipants: '',
+    instructorName: '',
+    instructorBio: '',
+    userId: 3, // replace this if using auth
+  });
+  const payload = {
+    ...eventData,
+    registrationFee: Number(eventData.registrationFee),
+    maxParticipants: Number(eventData.maxParticipants),
+    type: eventData.type,
+  link: eventData.link,
+  };
+  
+
+  const navigate = useNavigate();
+
  
+
+
+  const handleChange = (e) => {  //Captures input changes for any field.
+                                       //Dynamically updates the corresponding field in eventData.
+    const { name, value } = e.target;
+    setEventData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  
+
+  const handleSubmit = async () => {
+    const {
+      title, description, eventDate, eventTime, location, link,
+      category, registrationFee, maxParticipants,
+      instructorName, instructorBio, type
+    } = eventData;
+  
+    if (
+      !title || !description || !eventDate || !eventTime ||
+      !category || !registrationFee || !maxParticipants ||
+      !instructorName || !instructorBio || !type
+    ) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'All fields are required!',
+      });
+    }
+  
+    if (type === 'Online' && (!link || link.trim() === '')) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Event link is required for online events.',
+      });
+    }
+  
+    if (type === 'Physical' && (!location || location.trim() === '')) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Event location is required for physical events.',
+      });
+    }
+  
+    if (title.length > 60) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Title should be 60 characters or less.',
+      });
+    }
+  
+    if (description.length < 50) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Description must be at least 50 characters.',
+      });
+    }
+  
+    if (instructorBio.length < 30) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Bio must be at least 30 characters long.',
+      });
+    }
+  
+    if (isNaN(registrationFee)) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Registration fee must be a number.',
+      });
+    }
+  
+    if (isNaN(maxParticipants)) {
+      return Swal.fire({
+        icon: 'error',
+        title: 'Max participants must be a number.',
+      });
+    }
+  
+    try {
+      const response = await axios.post('http://localhost:8080/api/events', payload);
+      Swal.fire({
+        icon: 'success',
+        title: 'Event created successfully!',
+        text: 'Redirecting to browse page...',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+  
+      setTimeout(() => {
+        navigate('/pages/event_management/Event_management_browse');
+      }, 1500);
+  
+      setEventData({
+        title: '',
+        description: '',
+        eventDate: '',
+        eventTime: '',
+        type: '',
+        location: '',
+        link: '',
+        category: '',
+        registrationFee: '',
+        maxParticipants: '',
+        instructorName: '',
+        instructorBio: '',
+        userId: 2,
+      });
+    } catch (error) {
+      console.error('Error creating event:', error);
+      if (error.response?.data) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: `Error: ${JSON.stringify(error.response.data)}`,
+        });
+      }
+    }
+  };
+  
   
   
 
