@@ -64,22 +64,33 @@ export const LearningPlanView = () => {
       <div className="row">
         <div className="col-5 ">
           {state.LearningPlan.map((LearningPlan, index) => (
-            <div className="card  mt-3" >
-              <div className="card-body " >
-                <div key={index}>
-                <div class="row">
-                <div class="col">
-                 
-                  <p className="card-text">{LearningPlan.description}  </p>
+            <div className="card mt-3">
+            <div className="card-body p-0">
+              <div key={index} className="d-flex">
+                {/* Left Section with Month and Date */}
+                <div className="d-flex flex-column align-items-center justify-content-start bg-light p-3" style={{width: "80px"}}>
+                  <span className="text-uppercase small">{new Date(LearningPlan.date).toLocaleString('default', {month: 'short'})}</span>
+                  <h2 className="m-0" style={{fontSize: "2rem"}}>{LearningPlan.date.split('-')[2]}</h2>
                 </div>
-                <div class="col">
-                  <p className="card-text">{LearningPlan.date}</p>
-                  <p className="card-text">Start time: {LearningPlan.startTime} - {LearningPlan.endTime}</p>
+
+                {/* Middle Section with Content */}
+                <div className="d-flex flex-column p-3 flex-grow-1">
+                  <div className="d-flex justify-content-between align-items-start">
+                    <span className="badge bg-danger">{LearningPlan.title}</span>
+                  </div>
+                  <p className="card-text mt-2 mb-1">{LearningPlan.description}</p>
                 </div>
-                </div>
+
+                {/* Right Section with Time */}
+                <div className="d-flex flex-column align-items-end justify-content-center p-3">
+                  <p className="card-text text-muted small m-0">
+                    <i className="bi bi-clock me-1"></i>
+                    {LearningPlan.startTime} - {LearningPlan.endTime}
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
           ))}
           
 
