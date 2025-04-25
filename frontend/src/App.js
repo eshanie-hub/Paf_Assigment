@@ -3,10 +3,9 @@ import { Header } from "./components/Header";
 import { Navbar } from "./components/Navbar";
 import PostForm from './pages/post_management/Post_Form';
 import PostManagementCreate from './pages/post_management/post_management_create';
-import PostManagementView from './pages/post_management/Post_management_view';
 import PostManagementDelete from './pages/post_management/post_management_delete';
-import PostManagementUpdate from './pages/post_management/Post_management_update';
-
+import PostManagementUpdate from './pages/post_management/post_management_update';
+import PostManagementView from './pages/post_management/post_management_view';
 function App() {
   return (
     <BrowserRouter>
