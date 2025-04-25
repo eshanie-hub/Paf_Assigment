@@ -43,7 +43,7 @@ public class EventService {
             existing.setEventDate(updatedEvent.getEventDate());
             existing.setEventTime(updatedEvent.getEventTime());
 
-            // ✅ Type-based logic for link/location
+            // Type-based logic for link/location
             existing.setType(updatedEvent.getType());
             existing.setLocation("Physical".equals(updatedEvent.getType()) ? updatedEvent.getLocation() : "");
             existing.setLink("Online".equals(updatedEvent.getType()) ? updatedEvent.getLink() : "");
@@ -60,7 +60,7 @@ public class EventService {
         return null;
     }
 
-    // ✅ Register a user to an event
+    // Register a user to an event
     public Event registerUser(Long eventId, Long userId) {
         Event event = eventRepository.findById(eventId).orElseThrow();
         if (event.getRegisteredUsers() == null) {
@@ -75,7 +75,7 @@ public class EventService {
         return event;
     }
 
-    // ✅ Unregister a user from an event
+    // Unregister a user from an event
     public Event unregisterUser(Long eventId, Long userId) {
         Event event = eventRepository.findById(eventId).orElseThrow();
         if (event.getRegisteredUsers() != null) {
