@@ -15,7 +15,11 @@ import { LearningPlanView } from "./pages/learning_plan/Learning_plan_view";
 import { LearningPlanCreate } from "./pages/learning_plan/Learning_plan_create";
 import { LearningPlanUpdate } from "./pages/learning_plan/Learning_plan_update";
 import {LearningPlanCalendar} from "./pages/learning_plan/Learning_plan_calendar"
-
+import PostForm from './pages/post_management/Post_Form';
+import PostManagementCreate from './pages/post_management/post_management_create';
+import PostManagementDelete from './pages/post_management/post_management_delete';
+import PostManagementUpdate from './pages/post_management/post_management_update';
+import PostManagementView from './pages/post_management/post_management_view';
 function App() {
   return (
     <BrowserRouter>
@@ -38,6 +42,15 @@ function App() {
           <Route path="/pages/learning_plan/Learning_plan_create" element={<LearningPlanCreate/>}></Route>
           <Route path="/pages/learning_plan/Learning_plan_update/:id" element={<LearningPlanUpdate/>}></Route>
           <Route path="/pages/learning_plan/Learning_plan_calendar" element={<LearningPlanCalendar/>}></Route>
+
+          
+
+          {/* post management routes */}
+          <Route path="/" element={<PostManagementView />} />
+          <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
+          <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
+          <Route path="/pages/post_management/Post_management_delete/:id" element={<PostManagementDelete />} />
+          <Route path="/pages/post_management/Post_management_update/:id" element={<PostManagementUpdate />} />
 
         </Routes>
       </div>
