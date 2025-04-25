@@ -40,13 +40,13 @@ public class EventController {
         return eventService.updateEvent(id, updatedEvent);
     }
 
-    // ✅ Register a user to an event
+    // Register a user to an event
     @PutMapping("/{id}/register")
     public Event registerUser(@PathVariable Long id, @RequestParam Long userId) {
         return eventService.registerUser(id, userId);
     }
 
-    // ✅ Unregister a user from an event
+    // Unregister a user from an event
     @PutMapping("/{id}/unregister")
     public Event unregisterUser(@PathVariable Long id, @RequestParam Long userId) {
         return eventService.unregisterUser(id, userId);
