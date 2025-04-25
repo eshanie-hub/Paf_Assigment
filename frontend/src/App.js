@@ -7,11 +7,6 @@ import LearningProgressStatsCreate from "./pages/learning_progress/Learning_prog
 import LearningProgressUpdate from "./pages/learning_progress/Learning_progress_update";
 import LearningProgressTableCreate from "./pages/learning_progress/Learning_progress_table_create";
 
-import LearningProgressView from "./pages/learning_progress/Learning_Progress_view";
-import LearningProgressStatsCreate from "./pages/learning_progress/Learning_progress_stats_create";
-import LearningProgressUpdate from "./pages/learning_progress/Learning_progress_update";
-import LearningProgressTableCreate from "./pages/learning_progress/Learning_progress_table_create";
-
 import { EventManagementCreate } from "./pages/event_management/Event_management_create";
 import { EventManagementUpdate } from "./pages/event_management/Event_management_update";
 import { EventManagementSingleView } from "./pages/event_management/Event_management_single_view";
