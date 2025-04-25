@@ -40,7 +40,7 @@ const LearningProgressUpdate = ({ show, handleClose, courseId, refreshData }) =>
             await axios.put(`/api/courses/${courseId}`, formData);
             alert("Course updated successfully!");
             handleClose();
-            refreshData(); // Optional: refresh parent table/view
+            refreshData();
         } catch (error) {
             console.error('Error updating course:', error);
             alert('Failed to update course. Please try again.');
@@ -96,6 +96,7 @@ const LearningProgressUpdate = ({ show, handleClose, courseId, refreshData }) =>
                             name="deadline"
                             value={formData.deadline}
                             onChange={handleChange}
+                            min={new Date().toLocaleDateString('en-CA')}
                             required
                         />
                     </Form.Group>
