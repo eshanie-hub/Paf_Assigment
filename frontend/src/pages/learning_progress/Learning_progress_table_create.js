@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Toast, ToastContainer } from 'react-bootstrap';
 import axios from 'axios';
 
 const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
@@ -10,6 +10,8 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
         deadline: ''
     });
 
+    const [showToast, setShowToast] = useState(false);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -19,7 +21,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
         e.preventDefault();
         try {
             await axios.post('/api/courses', formData);
-            alert('New course added!');
+            setShowToast(true);
             handleClose();
             refreshData();
         } catch (error) {
@@ -29,7 +31,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
     };
 
     return (
-        <Modal show={show} onHide={handleClose}>
+        <><Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
                 <Modal.Title>Add New Course</Modal.Title>
             </Modal.Header>
@@ -42,8 +44,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
-                            required
-                        />
+                            required />
                     </Form.Group>
                     <Form.Group className="mt-2">
                         <Form.Label>Description</Form.Label>
@@ -52,8 +53,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            required
-                        />
+                            required />
                     </Form.Group>
                     <Form.Group className="mt-2">
                         <Form.Label>Progress</Form.Label>
@@ -62,8 +62,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
                             name="progress"
                             value={formData.progress}
                             onChange={handleChange}
-                            required
-                        />
+                            required />
                     </Form.Group>
                     <Form.Group className="mt-2">
                         <Form.Label>Deadline</Form.Label>
@@ -73,7 +72,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
                             value={formData.deadline}
                             onChange={handleChange}
                             required
-                            min={new Date().toLocaleDateString('en-CA')}    //validation added- user can select today's date or future dates only
+                            min={new Date().toLocaleDateString('en-CA')} //validation added- user can select today's date or future dates only
                         />
                     </Form.Group>
                 </Modal.Body>
@@ -83,6 +82,15 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
                 </Modal.Footer>
             </Form>
         </Modal>
+            <ToastContainer position="top-end" className="p-3">
+                <Toast onClose={() => setShowToast(false)} show={showToast} style={{ backgroundColor: '#F4C3D2', color: 'black' }} delay={3000} autohide>
+                    <Toast.Header>
+                        <strong className="me-auto">Success</strong>
+                    </Toast.Header>
+                    <Toast.Body>New course addedsuccessfully!</Toast.Body>
+                </Toast>
+            </ToastContainer></>
+
     );
 };
 
