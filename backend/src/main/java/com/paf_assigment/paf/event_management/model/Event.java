@@ -38,7 +38,7 @@ public class Event {
     private String instructorBio;
     private Long userId;
 
-    // New field to track registered user IDs
+    //  field to track registered user IDs
     @ElementCollection
     @CollectionTable(name = "event_registered_users", joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "user_id")
