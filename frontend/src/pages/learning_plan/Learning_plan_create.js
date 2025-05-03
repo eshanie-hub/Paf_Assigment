@@ -24,7 +24,7 @@ export const LearningPlanCreate = () => {
             })
           }
         })
-      }, [dataLearningPlan]);
+      }, []);
 
       const exsistingDate = (input) => {
         const existing = dataLearningPlan.LearningPlan.map((item) => item.date.toLowerCase());
@@ -205,7 +205,7 @@ export const LearningPlanCreate = () => {
                     </div>
                     )}
             </div>
-            <button className='btn mt-5' style={{backgroundColor: "#c1b688 "}} type='submit' onClick={handleSubmit}>
+            <button className='btn mt-5' style={{backgroundColor: "#F4C3D2"}} type='submit' onClick={handleSubmit}>
               Create new plan
             </button>
             
@@ -215,4 +215,3 @@ export const LearningPlanCreate = () => {
         </div>
       )
     }
-    
