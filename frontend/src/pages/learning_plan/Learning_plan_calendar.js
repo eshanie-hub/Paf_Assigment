@@ -55,7 +55,7 @@ export const LearningPlanCalendar = () => {
                 end,
                 isUrgent,
                 style: {
-                  backgroundColor: isUrgent ? '#dc3545' : '#0d6efd', // Bootstrap red/blue
+                  backgroundColor: isUrgent ? '#dc3545' : '#0d6efd', 
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
