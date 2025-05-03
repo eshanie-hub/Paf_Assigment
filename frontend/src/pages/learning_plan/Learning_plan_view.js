@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { LearningPlanSummary } from './Learning_plan_summary';
 
+
 export const LearningPlanView = () => {
   const [state, setState] = useState({
     LearningPlan: [],
@@ -30,6 +31,7 @@ export const LearningPlanView = () => {
       }));
     }
   }, [filter]);
+
 
 
   return (
