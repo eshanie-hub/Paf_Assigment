@@ -215,4 +215,3 @@ export const LearningPlanCreate = () => {
         </div>
       )
     }
-    
