@@ -17,7 +17,7 @@ public class EventController {
 
     @GetMapping
     public List<Event> getAllEvents() {
-        return eventService.getAllEvents();  // Returns a JSON array of events
+        return eventService.getAllEvents();  // Returns array of events
     }
 
     @PostMapping
