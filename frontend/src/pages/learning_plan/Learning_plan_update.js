@@ -75,7 +75,7 @@ export const LearningPlanUpdate = () => {
         }
         console.log(data);
 
-        axios.put(`http://localhost:8080/api/learningPlan/${params.id}`, data)
+        axios.put(`http://localhost:8080/api/learningPlan/${params.id}`, data, { withCredentials: true })
         .then((res) => {
           alert("Data submited successfully");
           navigate(-1);
@@ -84,7 +84,7 @@ export const LearningPlanUpdate = () => {
       }
       
       useEffect(() => {
-        axios.get(`http://localhost:8080/api/learningPlan/${params.id}`).then((res) => {
+        axios.get(`http://localhost:8080/api/learningPlan/${params.id}`, { withCredentials: true }).then((res) => {
           if(res.data){
             setState({
               title: res.data.title,

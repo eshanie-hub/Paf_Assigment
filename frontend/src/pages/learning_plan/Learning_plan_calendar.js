@@ -35,7 +35,7 @@ export const LearningPlanCalendar = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/learningPlan")
+        axios.get("http://localhost:8080/api/learningPlan", { withCredentials: true })
           .then(res => {
             const formattedEvents = res.data.map((plan, index) => {
               const date = plan.date.trim();
@@ -85,7 +85,7 @@ export const LearningPlanCalendar = () => {
       const handleClose = () => setSelectedEvent(null);
     
       const handleDelete = () => {
-        axios.delete(`http://localhost:8080/api/learningPlan/${selectedEvent.id}`)
+        axios.delete(`http://localhost:8080/api/learningPlan/${selectedEvent.id}`, { withCredentials: true })
           .then(() => {
             setEvents(prev => prev.filter(e => e.id !== selectedEvent.id));
             handleClose();

@@ -11,7 +11,7 @@ export const LearningPlanView = () => {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/learningPlan").then(res => {
+    axios.get("http://localhost:8080/api/learningPlan", {withCredentials: true}).then(res => {
       if(res.data){
         setState({
           LearningPlan: res.data,

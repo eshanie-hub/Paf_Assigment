@@ -14,7 +14,7 @@ export const LearningPlanSummary = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/api/learningPlan");
+                const response = await axios.get("http://localhost:8080/api/learningPlan", { withCredentials: true });
                 const plans = response.data;
                 
                 // Calculate all statistics

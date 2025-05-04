@@ -17,7 +17,7 @@ export const LearningPlanCreate = () => {
       })
 
     useEffect(() => {
-      axios.get("http://localhost:8080/api/learningPlan").then(res =>{
+      axios.get("http://localhost:8080/api/learningPlan", { withCredentials: true }).then(res =>{
           if(res.data){
             setDataLearningPlan({
               LearningPlan:res.data
@@ -103,7 +103,7 @@ export const LearningPlanCreate = () => {
         }
         console.log(data);
 
-        axios.post("http://localhost:8080/api/learningPlan", data)
+        axios.post("http://localhost:8080/api/learningPlan", data, { withCredentials: true })
         .then((res) => {
           
           alert("Plan added to schedule");
