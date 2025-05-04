@@ -76,7 +76,12 @@ export const Register = () => {
             required 
           />
         </div>
-        <button type="submit" className="btn btn-primary w-100">Register</button>
+        <button type="submit" className="btn w-100" style={{backgroundColor: "#F4C3D2"}}>Register</button>
+        <button className="btn w-100 mt-3" style={{backgroundColor: "#F4C3D2"}} type="button">
+        <a href="/login" style={{textDecoration: 'none', color:'black'}}>
+          Login
+        </a>
+      </button>
       </form>
     </div>
   );

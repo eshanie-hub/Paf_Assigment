@@ -70,14 +70,9 @@ export const Login = () => {
   };
 
   return (
+    <div className="container mt-5" style={{ maxWidth: '500px' }}>
+      <h3 className="mb-4 text-center">User Login</h3>
     <form>
-      <div className="d-flex align-items-center mb-3 pb-1">
-        <i className="fas fa-cubes fa-2x me-3" style={{ color: "#e2dad6" }}></i>
-        <span className="h1 fw-bold mb-0">Login</span>
-      </div>
-
-      <h5 className="fw-normal mb-3 pb-3" style={{ letterSpacing: "1px" }}>Sign into your account</h5>
-
       <div className="form-outline mb-4">
         <input
           type="text"
@@ -102,15 +97,21 @@ export const Login = () => {
         <label className="form-label" htmlFor="password">Password</label>
       </div>
 
-      <div className="pt-1 mb-4">
-        <button className="btn btn-lg btn-block" type="button" style={{ backgroundColor: "#c1b688" }} onClick={handleForm}>
+      <div className="pt-1 mb-4 d-flex gap-2">
+        <button className="btn flex-fill me-2" type="button" style={{ backgroundColor: "#F4C3D2" }} onClick={handleForm}>
           Login
         </button>
+        <button className="btn flex-fill" style={{backgroundColor: "#F4C3D2"}} type="button">
+        <a href="/register" style={{textDecoration: 'none', color:'black'}}>
+        Register
+        </a>
+      </button>
       </div>
 
       <Button variant="danger" onClick={handleGoogleLogin} className="w-100">
         Login with Google
       </Button>
     </form>
+    </div>
   );
 };

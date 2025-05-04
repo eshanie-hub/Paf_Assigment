@@ -26,6 +26,7 @@ import PostManagementView from './pages/post_management/post_management_view';
 
 import { Login } from "./pages/user_management/Login";
 import { Outlet } from "react-router-dom";
+import { Register } from "./pages/user_management/Register";
 
 function MainLayout() {
   return (
@@ -47,7 +48,7 @@ function App() {
       <Routes>
         {/* Login page without layout */}
         <Route path="/login" element={<Login />} />
-
+        <Route path="/register" element={<Register />} />
         {/* Routes with layout */}
         <Route path="/" element={<MainLayout />}>
           {/* Event Management */}
