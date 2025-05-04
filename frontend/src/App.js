@@ -22,6 +22,7 @@ import PostManagementCreate from './pages/post_management/post_management_create
 import PostManagementDelete from './pages/post_management/post_management_delete';
 import PostManagementUpdate from './pages/post_management/post_management_update';
 import PostManagementView from './pages/post_management/post_management_view';
+import { Login } from "./pages/user_management/Login";
 function App() {
   return (
     <BrowserRouter>
@@ -29,11 +30,16 @@ function App() {
       <div className="mx-5 my-3">
         <Header username="Eshanie" />
         <div className="d-flex flex-row mt-4 gap-5 " >
-
-          <Navbar />
+        
+          
+          {/* <Navbar /> */}
           <div className="p-3 flex-grow-1" style={{ backgroundColor: "#FFF5F7" }}>
-            <Routes>
+          <Routes>
+          
+          <Route path="/login" element={<Login />}></Route>
+            {/* <Routes> */}
               {/* event management routes */}
+              <Route path="/" element={<Navbar />}>
               <Route path="/pages/event_management/Event_management_create" element={<EventManagementCreate />}></Route>
               <Route path="/pages/event_management/Event_management_update/:id" element={<EventManagementUpdate />}></Route>
               <Route path="/pages/event_management/Event_management_browse" element={<EventManagementBrowse />}></Route>
@@ -48,7 +54,7 @@ function App() {
 
 
               {/* post management routes */}
-              <Route path="/" element={<PostManagementView />} />
+              <Route path="/pages/post_management/Home" element={<PostManagementView />} />
               <Route path="/pages/post_management/Post_Form/:id" element={<PostForm />} />
               <Route path="/pages/post_management/Post_management_create" element={<PostManagementCreate />} />
               <Route path="/pages/post_management/Post_management_delete/:id" element={<PostManagementDelete />} />
@@ -60,10 +66,11 @@ function App() {
               <Route path="/pages/learning_progress/Learning_progress_table_create" element={<LearningProgressTableCreate />}></Route>
               <Route path="/pages/learning_progress/Learning_progress_update/id" element={<LearningProgressUpdate />}></Route>
               <Route path="/pages/learning_progress/learning_progress_view" element={<LearningProgressView />}></Route>
+              </Route>
 
-
-            </Routes>
+              </Routes> 
           </div>
+          
         </div>
       </div>
     </BrowserRouter>
