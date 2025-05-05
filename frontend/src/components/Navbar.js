@@ -43,7 +43,7 @@ export const Navbar = () => {
     
         <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start text-dark" id="menu">
             <li className="nav-item mb-3">
-            <a href="/" className="nav-link align-middle px-3 text-dark rounded-pill" style={{ transition: "0.3s" }}>
+            <a href="/pages/post_management/Home" className="nav-link align-middle px-3 text-dark rounded-pill" style={{ transition: "0.3s" }}>
                     <span className="">Home</span>
                 </a>
             </li>
