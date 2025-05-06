@@ -20,6 +20,8 @@ export const EventManagementSingleView = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
   const [visibleComments, setVisibleComments] = useState(3);
+  const [isRegistering, setIsRegistering] = useState(false);
+
 
   useEffect(() => {
     const fetchSingleEvent = async () => {
@@ -85,15 +87,54 @@ export const EventManagementSingleView = () => {
   };
 
   const handleRegister = async () => {
+    setIsRegistering(true); // Start loading
+    const persisted = JSON.parse(localStorage.getItem('persist:root'));
+  
+    const userId = Number(JSON.parse(persisted?.userId ?? '0'));
+    const token = JSON.parse(persisted?.token ?? 'null');
+  
+    const tokenPayload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(tokenPayload));
+    const email = decodedPayload.sub;
+  
+    if (!userId || !email) {
+      setIsRegistering(false);
+      Swal.fire({ icon: 'warning', title: 'Login required to register' });
+      return;
+    }
+  
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/register?userId=${userId}`, null, { withCredentials: true });
+      const res = await axios.put(
+        `http://localhost:8080/api/events/${id}/register?userId=${userId}&email=${encodeURIComponent(email)}`,
+        null,
+        { withCredentials: true }
+      );
+  
       setEvent(res.data);
       setIsRegistered(true);
+      Swal.fire({
+        icon: 'success',
+        title: 'Registered successfully!',
+        text: 'Confirmation has been sent to your email.',
+        timer: 2000,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.error("Registration failed", err);
-      Swal.fire({ icon: 'error', title: 'Registration failed' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Could not register',
+        text: err.response?.data?.message || 'Unexpected error occurred.',
+      });
+    } finally {
+      setIsRegistering(false); // Stop loading
     }
   };
+  
+  
+  
 
   const handleUnregister = async () => {
     try {
@@ -374,9 +415,21 @@ export const EventManagementSingleView = () => {
                   Unregister
                 </button>
               ) : (
-                <button className='btn btn-primary w-100' onClick={handleRegister} disabled={isFull}>
-                  {isFull ? "Event Full" : "Register"}
-                </button>
+                <button
+  className='btn btn-primary w-100'
+  onClick={handleRegister}
+  disabled={isFull || isRegistering}
+>
+  {isRegistering ? (
+    <>
+      <Spinner animation="border" size="sm" className="me-2" />
+      Registering...
+    </>
+  ) : (
+    isFull ? "Event Full" : "Register"
+  )}
+</button>
+
               )}
 
 
