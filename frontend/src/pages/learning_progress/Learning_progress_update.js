@@ -12,7 +12,7 @@ const LearningProgressUpdate = ({ show, handleClose, courseId, refreshData }) =>
 
     useEffect(() => {
         if (show && courseId) {
-            axios.get(`/api/courses/${courseId}`)
+            axios.get(`/api/courses/${courseId}`, { withCredentials: true })
                 .then(res => {
                     const { title, description, progress, deadline } = res.data;
                     setFormData({
@@ -37,7 +37,7 @@ const LearningProgressUpdate = ({ show, handleClose, courseId, refreshData }) =>
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`/api/courses/${courseId}`, formData);
+            await axios.put(`/api/courses/${courseId}`, formData, { withCredentials: true });
             alert("Course updated successfully!");
             handleClose();
             refreshData();
