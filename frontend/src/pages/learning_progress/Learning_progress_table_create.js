@@ -20,7 +20,7 @@ const LearningProgressTableCreate = ({ show, handleClose, refreshData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('/api/courses', formData);
+            await axios.post('/api/courses', formData, { withCredentials: true });
             setShowToast(true);
             handleClose();
             refreshData();
