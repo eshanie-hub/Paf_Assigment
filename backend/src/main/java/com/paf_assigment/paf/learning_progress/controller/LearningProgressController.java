@@ -17,7 +17,7 @@ import com.paf_assigment.paf.learning_progress.service.LearningProgressService;
 
 @RestController
 @RequestMapping("/api/courses")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class LearningProgressController {
     private final LearningProgressService courseService;
 
