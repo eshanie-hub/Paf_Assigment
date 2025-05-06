@@ -30,7 +30,7 @@ const LearningProgressView = () => {
     const [totalPaintings, setTotalPaintings] = useState(0);
     const [totalCertificates, setTotalCertificates] = useState(0);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [showAddModal, setShowAddModal] = useState(false); // NEW
+    const [showAddModal, setShowAddModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState(null);
 
     useEffect(() => {
@@ -41,12 +41,14 @@ const LearningProgressView = () => {
     }, []);
 
     const fetchCourses = async () => {
-        const res = await axios.get("/api/courses");
+        const res = await axios.get("/api/courses", {
+            withCredentials: true,
+        });
         setCourses(res.data);
     };
 
     const fetchCompletedCourses = async () => {
-        const res = await axios.get("/api/courses/completed-count");
+        const res = await axios.get("/api/courses/completed-count", { withCredentials: true });
         setTotalCertificates(res.data);
     };
 
@@ -55,7 +57,7 @@ const LearningProgressView = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`/api/courses/${id}`);
+            await axios.delete(`/api/courses/${id}`, { withCredentials: true });
             fetchCourses();
         } catch (error) {
             console.error("Failed to delete course:", error);
@@ -65,12 +67,12 @@ const LearningProgressView = () => {
 
 
     const fetchPaintingStats = async () => {
-        const res = await axios.get("/api/painting-stats");
+        const res = await axios.get("/api/painting-stats", { withCredentials: true });
         setPaintingStats(res.data);
     };
 
     const fetchTotalPaintings = async () => {
-        const res = await axios.get("/api/painting-stats/total");
+        const res = await axios.get("/api/painting-stats/total", { withCredentials: true });
         setTotalPaintings(res.data);
     };
 
@@ -79,7 +81,7 @@ const LearningProgressView = () => {
         if (!confirmDelete) return;
 
         try {
-            await axios.delete(`/api/painting-stats/${id}`);
+            await axios.delete(`/api/painting-stats/${id}`, { withCredentials: true });
             fetchPaintingStats();
         } catch (error) {
             console.error("Failed to delete painting stat:", error);
