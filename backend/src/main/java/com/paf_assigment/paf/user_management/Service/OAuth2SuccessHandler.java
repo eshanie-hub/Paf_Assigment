@@ -46,10 +46,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 newUser.setUsername(name != null ? name : "OAuthUser");
                 newUser.setPassword(""); // OAuth users don't have a password
 
-                // Save once to generate ID
+                
                 newUser = userRepository.save(newUser);
 
-                // Set userId from generated ID and save again
+          
                 newUser.setId(newUser.getId());
                 return userRepository.save(newUser);
             });

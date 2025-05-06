@@ -40,13 +40,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setUsername(name != null ? name : "OAuthUser");
             newUser.setPassword(""); // no password for OAuth users
 
-            // Step 1: Save once to generate the DB ID
             newUser = userRepository.save(newUser);
-
-            // Step 2: Set user_id using the auto-generated id
             newUser.setId(newUser.getId());
-
-            // Step 3: Save again with user_id set
             return userRepository.save(newUser);
         });
 
