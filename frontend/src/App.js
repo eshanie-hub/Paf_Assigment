@@ -27,6 +27,7 @@ import PostManagementView from './pages/post_management/post_management_view';
 import { Login } from "./pages/user_management/Login";
 import { Outlet } from "react-router-dom";
 import { Register } from "./pages/user_management/Register";
+import { ProfileManagementView } from "./pages/profile_management/Profile_management_view";
 
 function MainLayout() {
   return (
@@ -47,7 +48,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Login page without layout */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* Routes with layout */}
         <Route path="/" element={<MainLayout />}>
@@ -76,6 +77,9 @@ function App() {
           <Route path="pages/learning_progress/Learning_progress_table_create" element={<LearningProgressTableCreate />} />
           <Route path="pages/learning_progress/Learning_progress_update/:id" element={<LearningProgressUpdate />} />
           <Route path="pages/learning_progress/learning_progress_view" element={<LearningProgressView />} />
+
+          {/* Profile Management */}
+          <Route path="pages/profile_management/Profile_management_view" element={<ProfileManagementView />} />
         </Route>
       </Routes>
     </BrowserRouter>

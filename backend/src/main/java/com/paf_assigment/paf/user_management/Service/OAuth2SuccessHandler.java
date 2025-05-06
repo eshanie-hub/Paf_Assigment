@@ -3,6 +3,7 @@ package com.paf_assigment.paf.user_management.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.paf_assigment.paf.user_management.model.UserModel;
 import com.paf_assigment.paf.user_management.repository.UserRepository;
 import com.paf_assigment.paf.user_management.security.JwtUtil;
 
@@ -28,24 +30,44 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException {
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
+        try {
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+            String email = oAuth2User.getAttribute("email");
+            String name = oAuth2User.getAttribute("name");
 
-        if (email == null) {
-            throw new RuntimeException("Email not provided by OAuth provider");
+            if (email == null) {
+                throw new RuntimeException("Email not provided by OAuth provider");
+            }
+
+            // Check if user exists, else create and save
+            UserModel user = userRepository.findByEmail(email).orElseGet(() -> {
+                UserModel newUser = new UserModel();
+                newUser.setEmail(email);
+                newUser.setUsername(name != null ? name : "OAuthUser");
+                newUser.setPassword(""); // OAuth users don't have a password
+
+                
+                newUser = userRepository.save(newUser);
+
+          
+                newUser.setId(newUser.getId());
+                return userRepository.save(newUser);
+            });
+
+            // Generate JWT with claims
+            String jwt = jwtUtil.generateTokenWithClaims(email, Map.of(
+                    "userId", user.getId(),
+                    "username", user.getUsername()));
+
+            // Redirect with token and user info
+            String redirectUrl = "http://localhost:3000/?token=" + jwt +
+                    "&username=" + URLEncoder.encode(user.getUsername(), StandardCharsets.UTF_8) +
+                    "&userId=" + URLEncoder.encode(user.getId().toString(), StandardCharsets.UTF_8);
+
+            response.sendRedirect(redirectUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "OAuth Login Error: " + e.getMessage());
         }
-
-        // Generate JWT directly, no DB lookup
-        String jwt = jwtUtil.generateToken(email);
-
-        String username = oAuth2User.getAttribute("name") != null
-                ? oAuth2User.getAttribute("name")
-                : "OAuthUser";
-
-        // Send token back via redirect
-        String redirectUrl = "http://localhost:3000/login?token=" + jwt + "&username=" +
-                URLEncoder.encode(username, StandardCharsets.UTF_8);
-
-        response.sendRedirect(redirectUrl);
     }
 }

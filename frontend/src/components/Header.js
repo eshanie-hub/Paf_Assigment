@@ -13,7 +13,7 @@ export const Header = () => {
   
   const logout = () =>{
       dispatch(setLogout());
-      navigate("/login")
+      navigate("/")
   }
 
   return (
