@@ -14,7 +14,7 @@ const LearningProgressStatsCreate = () => {
     useEffect(() => {
         const fetchExistingTypes = async () => {
             try {
-                const res = await axios.get('/api/painting-stats');
+                const res = await axios.get('/api/painting-stats', { withCredentials: true });
                 const types = res.data.map(stat => stat.paintingType);
                 setExistingTypes([...new Set(types)]); // Remove duplicates with Set
             } catch (error) {
@@ -45,7 +45,8 @@ const LearningProgressStatsCreate = () => {
         await axios.post('/api/painting-stats', {
             paintingType: typeToSubmit,
             paintingCount
-        });
+        }, { withCredentials: true });
+
 
         alert("Painting Stat Created");
         // Redirect back to the Learning Progress page
