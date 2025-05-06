@@ -108,9 +108,11 @@ export const Login = () => {
       </button>
       </div>
 
-      <Button variant="danger" onClick={handleGoogleLogin} className="w-100">
+      <button className="btn flex-fill w-100" style={{backgroundColor: "#F4C3D2"}} type="button">
+      <a href="http://localhost:8080/oauth2/authorization/google" style={{textDecoration: 'none', color:'black'}}>
         Login with Google
-      </Button>
+      </a>
+      </button>
     </form>
     </div>
   );
