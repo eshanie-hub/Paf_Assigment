@@ -9,7 +9,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "*") // Allow React frontend to connect
+//@CrossOrigin(origins = "*") // Allow React frontend to connect
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class EventController {
 
     @Autowired

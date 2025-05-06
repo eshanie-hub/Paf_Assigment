@@ -4,6 +4,7 @@ import {  Button, Badge } from 'react-bootstrap';
 import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaHeart, FaShareAlt, FaClock,FaExternalLinkAlt } from 'react-icons/fa';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
 
 
 
@@ -15,10 +16,13 @@ export const  EventManagementSingleView = () => {
   const [event, setEvent] = useState(null);
   const navigate = useNavigate();  //used to redirect on update
   // Assuming userId is stored in localStorage  
-  // const userId = localStorage.getItem('userId');
-  
-  
-  const userId = 3; // For testing purposes, replace with actual user ID from localStorage
+  //const userId = localStorage.getItem('userId');
+  //const userId = useSelector((state) => state.userId);
+
+  const userId = Number(useSelector(state => state.userId)?.replace(/"/g, ''));
+
+
+ // const userId = 3; // For testing purposes, replace with actual user ID from localStorage
 
   const [isRegistered, setIsRegistered] = useState(false);
 
@@ -27,7 +31,7 @@ export const  EventManagementSingleView = () => {
 useEffect(() => {
   const fetchSingleEvent = async () => {
     try {
-      const res = await axios.get(`http://localhost:8080/api/events/${id}`);
+      const res = await axios.get(`http://localhost:8080/api/events/${id}`, {withCredentials:true} );
       setEvent(res.data);
     } catch (err) {
       console.error("Error fetching single event:", err);
@@ -92,7 +96,7 @@ useEffect(() => {
   
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:8080/api/events/${id}`);
+        await axios.delete(`http://localhost:8080/api/events/${id}`,{withCredentials:true});
         Swal.fire({
           icon: 'success',
           title: 'Deleted!',
@@ -117,7 +121,9 @@ useEffect(() => {
 
   const handleRegister = async () => {
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/register?userId=${userId}`);
+      const res = await axios.put(`http://localhost:8080/api/events/${id}/register?userId=${userId}`,null, {
+        withCredentials: true
+      });
       setEvent(res.data);
       setIsRegistered(true);
     } catch (err) {
@@ -126,9 +132,10 @@ useEffect(() => {
     }
   };
   
+  
   const handleUnregister = async () => {
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`);
+      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`,null, {withCredentials:true});
       setEvent(res.data);
       setIsRegistered(false);
     } catch (err) {
@@ -250,13 +257,13 @@ useEffect(() => {
             </div>
             </div>
 
-            <div className='mt-4 p-2 bg-white rounded '>
+            {/* <div className='mt-4 p-2 bg-white rounded '>
               <h5 className='fw-bold'>Hosted By</h5>
               <div className='d-flex w-100 align-items-center gap-2'>
                 <img src='/ProfilePic.png' alt="avatar" className="rounded-circle me-2" width={35} height={35} />
                 <strong>{event.instructorName}</strong>
                 </div>
-            </div>
+            </div> */}
 
             <div className='mt-5 p-2 bg-white rounded'>
               <div>
