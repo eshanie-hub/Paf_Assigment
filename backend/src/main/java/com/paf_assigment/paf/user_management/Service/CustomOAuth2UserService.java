@@ -9,33 +9,47 @@ import org.springframework.stereotype.Service;
 
 import com.paf_assigment.paf.user_management.model.UserModel;
 import com.paf_assigment.paf.user_management.repository.UserRepository;
+import com.paf_assigment.paf.user_management.security.JwtUtil;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-
+    private static final AtomicLong counter = new AtomicLong();
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User user = super.loadUser(userRequest);
+        OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String email = user.getAttribute("email");
-        String name = user.getAttribute("name");
+        String email = oAuth2User.getAttribute("email");
+        String name = oAuth2User.getAttribute("name");
 
         if (email == null) {
             throw new OAuth2AuthenticationException("Email not found from OAuth provider");
         }
 
-        userRepository.findByEmail(email).orElseGet(() -> {
+        UserModel user = userRepository.findByEmail(email).orElseGet(() -> {
             UserModel newUser = new UserModel();
             newUser.setEmail(email);
-            newUser.setUsername(name != null ? name : "GoogleUser");
+            newUser.setUsername(name != null ? name : "OAuthUser");
             newUser.setPassword(""); // no password for OAuth users
+
+            // Step 1: Save once to generate the DB ID
+            newUser = userRepository.save(newUser);
+
+            // Step 2: Set user_id using the auto-generated id
+            newUser.setId(newUser.getId());
+
+            // Step 3: Save again with user_id set
             return userRepository.save(newUser);
         });
 
-        return user;
-
+        return oAuth2User;
     }
 }

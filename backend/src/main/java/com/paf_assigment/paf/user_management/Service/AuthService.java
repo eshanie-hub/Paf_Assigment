@@ -1,7 +1,10 @@
 package com.paf_assigment.paf.user_management.Service;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +18,7 @@ import com.paf_assigment.paf.user_management.security.JwtUtil;
 
 @Service
 public class AuthService {
+    private static final AtomicLong counter = new AtomicLong();
     @Autowired
     private UserRepository userRepo;
 
@@ -30,16 +34,21 @@ public class AuthService {
         }
 
         UserModel user = new UserModel();
+        // user.setId(counter.incrementAndGet());
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepo.save(user);
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateTokenWithClaims(user.getEmail(), Map.of(
+                "userId", user.getId(),
+                "username", user.getUsername()));
 
         HashMap<String, Object> res = new HashMap<>();
         res.put("token", token);
+        res.put("username", user.getUsername());
+        res.put("userId", user.getId());
         return res;
     }
 
@@ -58,10 +67,13 @@ public class AuthService {
             return response;
         }
 
-        String token = jwtUtil.generateToken(user.getUsername());
+        String token = jwtUtil.generateTokenWithClaims(user.getEmail(), Map.of(
+                "userId", user.getId(),
+                "username", user.getUsername()));
+
         response.put("token", token);
         response.put("username", user.getUsername());
+        response.put("userId", user.getId());
         return response;
     }
-
 }
