@@ -16,7 +16,7 @@ export const  EventManagementView = () => {
       
         const today = new Date(); 
 
-        // Sort events by eventDate ascending and get only the latest 3
+        // Sort events by eventDate ascending and get only the latest 5
         const sorted = res.data
           .filter(e => new Date(e.eventDate) >= today) // only future or today
           .sort((a, b) =>   new Date(a.eventDate) - new Date(b.eventDate))  // ascending: soonest first

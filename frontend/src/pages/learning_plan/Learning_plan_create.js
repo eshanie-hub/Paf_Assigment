@@ -17,14 +17,14 @@ export const LearningPlanCreate = () => {
       })
 
     useEffect(() => {
-      axios.get("http://localhost:8080/api/learningPlan").then(res =>{
+      axios.get("http://localhost:8080/api/learningPlan", { withCredentials: true }).then(res =>{
           if(res.data){
             setDataLearningPlan({
               LearningPlan:res.data
             })
           }
         })
-      }, [dataLearningPlan]);
+      }, []);
 
       const exsistingDate = (input) => {
         const existing = dataLearningPlan.LearningPlan.map((item) => item.date.toLowerCase());
@@ -103,7 +103,7 @@ export const LearningPlanCreate = () => {
         }
         console.log(data);
 
-        axios.post("http://localhost:8080/api/learningPlan", data)
+        axios.post("http://localhost:8080/api/learningPlan", data, { withCredentials: true })
         .then((res) => {
           
           alert("Plan added to schedule");
@@ -205,7 +205,7 @@ export const LearningPlanCreate = () => {
                     </div>
                     )}
             </div>
-            <button className='btn mt-5' style={{backgroundColor: "#c1b688 "}} type='submit' onClick={handleSubmit}>
+            <button className='btn mt-5' style={{backgroundColor: "#F4C3D2"}} type='submit' onClick={handleSubmit}>
               Create new plan
             </button>
             
@@ -215,4 +215,3 @@ export const LearningPlanCreate = () => {
         </div>
       )
     }
-    
