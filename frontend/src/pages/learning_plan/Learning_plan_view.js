@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { LearningPlanSummary } from './Learning_plan_summary';
+import { useSelector } from 'react-redux';
 
 
 export const LearningPlanView = () => {
@@ -42,7 +43,7 @@ export const LearningPlanView = () => {
     </div>
     <div className="col d-flex justify-content-end align-items-center">
       {/* Filter Dropdown */}
-      <div className="dropdown me-2">
+      <div className="dropdown me-2" style={{ zIndex: 3 }}>
         <button 
           className="btn dropdown-toggle" 
           style={{backgroundColor: "#F4C3D2"}} 
@@ -115,7 +116,7 @@ export const LearningPlanView = () => {
     </div>
 
     {/* Right Column - LearningPlanSummary with Gap */}
-    <div className="col-md-6">
+    <div className="col-md-6" style={{ zIndex: 2 }}>
       <div className="ps-md-3 sticky-top" style={{top: '20px'}}>
         <LearningPlanSummary/>
       </div>

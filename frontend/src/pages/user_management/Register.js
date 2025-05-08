@@ -30,7 +30,7 @@ export const Register = () => {
       setFormData({ username: '', email: '', password: '' });
       // Wait 1 second and then redirect
     setTimeout(() => {
-      navigate('/login');
+      navigate('/');
     }, 1000);
     } catch (error) {
       console.error(error);
@@ -39,12 +39,21 @@ export const Register = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '500px' }}>
-      <h3 className="mb-4 text-center">User Registration</h3>
-      {message && <div className="alert alert-info text-center">{message}</div>}
+    <div style={{display: "flex", height: "100vh", fontFamily: "sans-serif",backgroundImage: `url("bg.jpg")`, backgroundSize: "100%",       // Ensures image covers entire element
+      backgroundPosition: "center",  
+      backgroundRepeat: "no-repeat", 
+      width: "100vw",               
+      margin: 0,                    
+      padding: 0 
+      }}>
+      <div style={{width: "60%",maxWidth: "500px",backgroundColor: "#fff",borderRadius: "20px", boxShadow: "0 0 15px rgba(0,0,0,0.2)",margin: "auto",padding: "40px",display: "flex",flexDirection: "column",justifyContent: "center",}}>
+        <h1 style={{textAlign: "center",marginBottom: "10px",}}>Register</h1>
+        <h6 style={{textAlign: "center",fontWeight: "bold",marginBottom: "20px"}}>Create your Account.</h6>
+
+        {message && <div className="alert alert-info text-center">{message}</div>}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Username</label>
+          <label className="form-label mt-3">Username</label>
           <input 
             type="text" 
             className="form-control" 
@@ -55,7 +64,7 @@ export const Register = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label  mt-3">Email</label>
           <input 
             type="email" 
             className="form-control" 
@@ -66,7 +75,7 @@ export const Register = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label  mt-3">Password</label>
           <input 
             type="password" 
             className="form-control" 
@@ -75,14 +84,18 @@ export const Register = () => {
             onChange={handleChange}
             required 
           />
+
+        <button style={{backgroundColor: "#f8c3d9",border: "none",height: "45px",borderRadius: "10px",fontWeight: "bold",color: "#000",cursor: "pointer", marginTop:"20px", width: "100%"}}>Register</button>
+
+        <div style={{marginTop: "15px",textAlign: "center",fontSize: "0.85rem",color: "black"}}>
+          Are you registered? <a href="/">Login</a>
         </div>
-        <button type="submit" className="btn w-100" style={{backgroundColor: "#F4C3D2"}}>Register</button>
-        <button className="btn w-100 mt-3" style={{backgroundColor: "#F4C3D2"}} type="button">
-        <a href="/" style={{textDecoration: 'none', color:'black'}}>
-          Login
-        </a>
-      </button>
+      </div>
       </form>
+      
+     
+    </div>
+    <div style={{width: "40%"}}></div>
     </div>
   );
 };
