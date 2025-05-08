@@ -13,7 +13,9 @@ export const EventManagementBrowse = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/events');
+        const res = await axios.get('http://localhost:8080/api/events', {
+          withCredentials: true
+        });
         setEvents(res.data);
         setFilteredEvents(res.data);
       } catch (err) {

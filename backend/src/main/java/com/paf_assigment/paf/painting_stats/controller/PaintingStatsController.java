@@ -16,7 +16,8 @@ import com.paf_assigment.paf.painting_stats.service.PaintingStatsService;
 
 @RestController
 @RequestMapping("/api/painting-stats")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+
 public class PaintingStatsController {
     private final PaintingStatsService service;
 

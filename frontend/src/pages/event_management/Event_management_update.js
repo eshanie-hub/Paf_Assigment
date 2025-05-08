@@ -29,7 +29,7 @@ const [eventData, setEventData] = useState({
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/events/${id}`);
+        const res = await axios.get(`http://localhost:8080/api/events/${id}`,{withCredentials:true});
         setEventData(res.data);
       } catch (error) {
         console.error('Error fetching event:', error);
@@ -134,7 +134,7 @@ const [eventData, setEventData] = useState({
     };
   
     try {
-      await axios.put(`http://localhost:8080/api/events/${id}`, payload);
+      await axios.put(`http://localhost:8080/api/events/${id}`, payload,{withCredentials:true});
       Swal.fire({
         icon: 'success',
         title: 'Updated!',

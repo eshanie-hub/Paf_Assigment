@@ -1,6 +1,7 @@
 package com.paf_assigment.paf.event_management.controller;
 
 import com.paf_assigment.paf.event_management.model.Event;
+import com.paf_assigment.paf.event_management.service.EmailService;
 import com.paf_assigment.paf.event_management.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,15 +10,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "*") // Allow React frontend to connect
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class EventController {
 
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private EmailService emailService;
+
     @GetMapping
     public List<Event> getAllEvents() {
-        return eventService.getAllEvents();  // Returns array of events
+        return eventService.getAllEvents();
     }
 
     @PostMapping
@@ -40,13 +44,22 @@ public class EventController {
         return eventService.updateEvent(id, updatedEvent);
     }
 
-    // Register a user to an event
+    //  Register a user to an event and send email
     @PutMapping("/{id}/register")
-    public Event registerUser(@PathVariable Long id, @RequestParam Long userId) {
-        return eventService.registerUser(id, userId);
+    public Event registerUser(
+            @PathVariable Long id,
+            @RequestParam Long userId,
+            @RequestParam String email) {
+
+        Event updatedEvent = eventService.registerUser(id, userId);
+
+        // Send confirmation email
+        emailService.sendRegistrationEmail(email, updatedEvent);
+
+
+        return updatedEvent;
     }
 
-    // Unregister a user from an event
     @PutMapping("/{id}/unregister")
     public Event unregisterUser(@PathVariable Long id, @RequestParam Long userId) {
         return eventService.unregisterUser(id, userId);

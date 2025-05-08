@@ -1,82 +1,68 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {  Button, Badge } from 'react-bootstrap';
-import { FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaHeart, FaShareAlt, FaClock,FaExternalLinkAlt } from 'react-icons/fa';
+import { Button, Badge } from 'react-bootstrap';
+import { Form, Card, Spinner } from 'react-bootstrap';
+import {
+  FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaShareAlt, FaClock, FaExternalLinkAlt
+} from 'react-icons/fa';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
 
-
-
-export const  EventManagementSingleView = () => {
-
-  
-
-  const { id } = useParams(); // get event ID from URL
+export const EventManagementSingleView = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const userId = Number(useSelector((state) => state.userId)?.replace(/"/g, ''));
   const [event, setEvent] = useState(null);
-  const navigate = useNavigate();  //used to redirect on update
-  // Assuming userId is stored in localStorage  
-  // const userId = localStorage.getItem('userId');
-  
-  
-  const userId = 3; // For testing purposes, replace with actual user ID from localStorage
-
   const [isRegistered, setIsRegistered] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState('');
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [visibleComments, setVisibleComments] = useState(3);
+  const [isRegistering, setIsRegistering] = useState(false);
 
 
+  useEffect(() => {
+    const fetchSingleEvent = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/events/${id}`, { withCredentials: true });
+        setEvent(res.data);
+      } catch (err) {
+        console.error("Error fetching event:", err);
+      }
+    };
 
-useEffect(() => {
-  const fetchSingleEvent = async () => {
-    try {
-      const res = await axios.get(`http://localhost:8080/api/events/${id}`);
-      setEvent(res.data);
-    } catch (err) {
-      console.error("Error fetching single event:", err);
+    const fetchComments = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/events/${id}/comments`, { withCredentials: true });
+        setComments(res.data);
+      } catch (err) {
+        console.error("Error fetching comments:", err);
+      }
+    };
+
+    fetchSingleEvent();
+    fetchComments();
+  }, [id]);
+
+  useEffect(() => {
+    if (event?.registeredUsers) {
+      setIsRegistered(event.registeredUsers.includes(userId));
     }
-  };
+  }, [event, userId]);
 
-  fetchSingleEvent();
-}, [id]);
-
-// When event is fetched, check if user is registered
-useEffect(() => {
-  if (event && event.registeredUsers) {
-    setIsRegistered(event.registeredUsers.includes(userId));
-  }
-}, [event, userId]);
-
-
-  if (!event) return <p className="p-3">Loading event...</p>; //Prevents the page from crashing while event is still null
-
-  const isFull = event.registeredUsers.length >= event.maxParticipants;
-
-
-  const handleCopyLink = () => {               //Handle Share
-    const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl)
-      .then(() => {
-        Swal.fire({
-          icon: 'success',
-          title: 'Link copied!',
-          text: 'The event link has been copied to your clipboard.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
-      })
-      .catch(() => {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops!',
-          text: 'Failed to copy the link.',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-        });
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      Swal.fire({
+        icon: 'success',
+        title: 'Link copied!',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000
       });
+    });
   };
 
   const handleDelete = async () => {
@@ -86,60 +72,175 @@ useEffect(() => {
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Yes, delete it!'
     });
-  
+
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:8080/api/events/${id}`);
-        Swal.fire({
-          icon: 'success',
-          title: 'Deleted!',
-          text: 'The event has been deleted.',
-          timer: 2000,
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
-        // Redirect back to browse page or homepage
-        window.location.href = '/pages/event_management/Event_management_browse';
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to delete the event.',
-        });
+        await axios.delete(`http://localhost:8080/api/events/${id}`, { withCredentials: true });
+        Swal.fire({ icon: 'success', title: 'Deleted!', toast: true, timer: 2000 });
+        navigate('/pages/event_management/Event_management_browse');
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Delete failed' });
       }
     }
   };
 
   const handleRegister = async () => {
+    setIsRegistering(true); // Start loading
+    const persisted = JSON.parse(localStorage.getItem('persist:root'));
+  
+    const userId = Number(JSON.parse(persisted?.userId ?? '0'));
+    const token = JSON.parse(persisted?.token ?? 'null');
+  
+    const tokenPayload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(tokenPayload));
+    const email = decodedPayload.sub;
+  
+    if (!userId || !email) {
+      setIsRegistering(false);
+      Swal.fire({ icon: 'warning', title: 'Login required to register' });
+      return;
+    }
+  
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/register?userId=${userId}`);
+      const res = await axios.put(
+        `http://localhost:8080/api/events/${id}/register?userId=${userId}&email=${encodeURIComponent(email)}`,
+        null,
+        { withCredentials: true }
+      );
+  
       setEvent(res.data);
       setIsRegistered(true);
+      Swal.fire({
+        icon: 'success',
+        title: 'Registered successfully!',
+        text: 'Confirmation has been sent to your email.',
+        timer: 2000,
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.error("Registration failed", err);
-      Swal.fire({ icon: 'error', title: 'Could not register.' });
+      Swal.fire({
+        icon: 'error',
+        title: 'Could not register',
+        text: err.response?.data?.message || 'Unexpected error occurred.',
+      });
+    } finally {
+      setIsRegistering(false); // Stop loading
     }
   };
   
+  
+  
+
   const handleUnregister = async () => {
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`);
+      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`, null, { withCredentials: true });
       setEvent(res.data);
       setIsRegistered(false);
     } catch (err) {
-      console.error("Unregister failed", err);
-      Swal.fire({ icon: 'error', title: 'Could not unregister.' });
+      console.error("Unregistration failed", err);
+      Swal.fire({ icon: 'error', title: 'Unregistration failed' });
+    }
+  };
+
+  const handlePostComment = async () => {
+    if (!newComment.trim()) return;
+  
+    // Get and clean name from localStorage
+    const persistedState = JSON.parse(localStorage.getItem('persist:root'));
+    const rawName = persistedState?.name;
+    const username = rawName ? rawName.replace(/\\|"/g, '') : 'Anonymous';
+  
+    try {
+      await axios.post(
+        `http://localhost:8080/api/events/${id}/comments`,
+        {
+          content: newComment,
+          userId,
+          username,
+        },
+        { withCredentials: true }
+      );
+  
+      const updatedComments = await axios.get(
+        `http://localhost:8080/api/events/${id}/comments`,
+        { withCredentials: true }
+      );
+      setComments(updatedComments.data);
+      setNewComment('');
+    } catch (err) {
+      console.error('Post comment failed', err);
+      Swal.fire({ icon: 'error', title: 'Post failed' });
     }
   };
   
-  
-  
-  
+
+  const handleDeleteComment = async (commentId) => {
+    const confirm = await Swal.fire({
+      title: 'Delete this comment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await axios.delete(
+          `http://localhost:8080/api/comments/${commentId}`,
+          {
+            withCredentials: true,
+            headers: {
+              userId: userId
+            }
+          }
+        );
+        
+        setComments((prev) => prev.filter(c => c.id !== commentId));
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Delete failed' });
+      }
+    }
+  };
+
+  const handleEditComment = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditingContent(comment.content);
+  };
+
+  const handleUpdateComment = async () => {
+    if (!editingContent.trim()) return;
+
+    try {
+      const res = await axios.put(
+        `http://localhost:8080/api/comments/${editingCommentId}`,
+        { content: editingContent },
+        {
+          withCredentials: true,
+          headers: {
+            userId: userId
+          }
+        }
+      );
+      
+
+      setComments(comments.map(c => c.id === editingCommentId ? res.data : c));
+      setEditingCommentId(null);
+      setEditingContent('');
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'Update failed' });
+    }
+  };
+
+  const handleShowMore = () => setVisibleComments(prev => prev + 3);
+
+  if (!event) return <div className="p-4">Loading...</div>;
+
+  const isFull = event.registeredUsers.length >= event.maxParticipants;
 
   
   return (
@@ -216,14 +317,89 @@ useEffect(() => {
                 <p>{event.description}</p>
               </div>
 
-              <div className='mt-5'>
-                <h5>Comments (2)</h5>
-                <textarea className='w-100 border border-light rounded p-2' rows={3} placeholder='Write a comment...'></textarea>
-              </div>
+              <div className="mt-5">
+  <h5>Comments ({comments.length})</h5>
 
-              <div className='d-flex justify-content-end mt-3'>
-                <a href=''><button className='btn btn-primary'>Post Comment</button></a>
+  {/* New Comment Input */}
+  <Form>
+    <Form.Group controlId="newComment">
+      <Form.Control
+        as="textarea"
+        rows={3}
+        placeholder="Write a comment..."
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        className="mb-3"
+      />
+    </Form.Group>
+    <div className="d-flex justify-content-end">
+      <Button variant="primary" onClick={handlePostComment}>
+        Post Comment
+      </Button>
+    </div>
+  </Form>
+
+  {/* Existing Comments List */}
+  <div className="mt-4">
+    {comments.slice(0, visibleComments).map((comment) => (
+      <Card key={comment.id} className="mb-3">
+        <Card.Body>
+          <div className="d-flex justify-content-between">
+            <strong>{comment.username}</strong>
+            {userId  === comment.userId && editingCommentId !== comment.id && (
+              <div className="d-flex gap-2">
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
+                  onClick={() => handleEditComment(comment)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleDeleteComment(comment.id)}
+                >
+                  Delete
+                </Button>
               </div>
+            )}
+          </div>
+
+          {editingCommentId === comment.id ? (
+            <>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                className="mt-2"
+                value={editingContent}
+                onChange={(e) => setEditingContent(e.target.value)}
+              />
+              <div className="mt-2 d-flex justify-content-end gap-2">
+                <Button size="sm" variant="success" onClick={handleUpdateComment}>
+                  Save
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => setEditingCommentId(null)}>
+                  Cancel
+                </Button>
+              </div>
+            </>
+          ) : (
+            <Card.Text className="mt-2">{comment.content}</Card.Text>
+          )}
+        </Card.Body>
+      </Card>
+    ))}
+
+    {visibleComments < comments.length && (
+      <div className="d-flex justify-content-center mt-2">
+        <Button size="sm" variant="outline-primary" onClick={handleShowMore}>
+          Show More
+        </Button>
+      </div>
+    )}
+  </div>
+</div>
 
             
         </div>
@@ -239,9 +415,21 @@ useEffect(() => {
                   Unregister
                 </button>
               ) : (
-                <button className='btn btn-primary w-100' onClick={handleRegister} disabled={isFull}>
-                  {isFull ? "Event Full" : "Register"}
-                </button>
+                <button
+  className='btn btn-primary w-100'
+  onClick={handleRegister}
+  disabled={isFull || isRegistering}
+>
+  {isRegistering ? (
+    <>
+      <Spinner animation="border" size="sm" className="me-2" />
+      Registering...
+    </>
+  ) : (
+    isFull ? "Event Full" : "Register"
+  )}
+</button>
+
               )}
 
 
@@ -250,13 +438,13 @@ useEffect(() => {
             </div>
             </div>
 
-            <div className='mt-4 p-2 bg-white rounded '>
+            {/* <div className='mt-4 p-2 bg-white rounded '>
               <h5 className='fw-bold'>Hosted By</h5>
               <div className='d-flex w-100 align-items-center gap-2'>
                 <img src='/ProfilePic.png' alt="avatar" className="rounded-circle me-2" width={35} height={35} />
                 <strong>{event.instructorName}</strong>
                 </div>
-            </div>
+            </div> */}
 
             <div className='mt-5 p-2 bg-white rounded'>
               <div>
