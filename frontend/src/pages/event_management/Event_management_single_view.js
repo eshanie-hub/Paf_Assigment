@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Badge } from 'react-bootstrap';
-import { Form, Card, Spinner } from 'react-bootstrap';
+import { Button, Badge, Form, Card, Spinner } from 'react-bootstrap';
 import {
   FaCalendarAlt, FaMapMarkerAlt, FaUsers, FaShareAlt, FaClock, FaExternalLinkAlt
 } from 'react-icons/fa';
@@ -12,7 +11,26 @@ import { useSelector } from 'react-redux';
 export const EventManagementSingleView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const userId = Number(useSelector((state) => state.userId)?.replace(/"/g, ''));
+
+  const reduxUserId = useSelector((state) => state.userId);
+
+let userId = 0;
+
+if (reduxUserId) {
+  userId = typeof reduxUserId === 'string'
+    ? Number(reduxUserId.replace(/"/g, ''))
+    : Number(reduxUserId);
+} else {
+  try {
+    const persisted = JSON.parse(localStorage.getItem('persist:root'));
+    const parsedUserId = JSON.parse(persisted?.userId || '0');
+    userId = Number(parsedUserId);
+  } catch {
+    userId = 0;
+  }
+}
+
+
   const [event, setEvent] = useState(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [comments, setComments] = useState([]);
@@ -21,7 +39,6 @@ export const EventManagementSingleView = () => {
   const [editingContent, setEditingContent] = useState('');
   const [visibleComments, setVisibleComments] = useState(3);
   const [isRegistering, setIsRegistering] = useState(false);
-
 
   useEffect(() => {
     const fetchSingleEvent = async () => {
@@ -87,29 +104,30 @@ export const EventManagementSingleView = () => {
   };
 
   const handleRegister = async () => {
-    setIsRegistering(true); // Start loading
-    const persisted = JSON.parse(localStorage.getItem('persist:root'));
-  
-    const userId = Number(JSON.parse(persisted?.userId ?? '0'));
-    const token = JSON.parse(persisted?.token ?? 'null');
-  
-    const tokenPayload = token.split('.')[1];
-    const decodedPayload = JSON.parse(atob(tokenPayload));
-    const email = decodedPayload.sub;
-  
+    setIsRegistering(true);
+
+    let email = '';
+    try {
+      const persisted = JSON.parse(localStorage.getItem('persist:root'));
+      const token = JSON.parse(persisted?.token ?? 'null');
+      const tokenPayload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(tokenPayload));
+      email = decodedPayload.sub;
+    } catch {}
+
     if (!userId || !email) {
       setIsRegistering(false);
       Swal.fire({ icon: 'warning', title: 'Login required to register' });
       return;
     }
-  
+
     try {
       const res = await axios.put(
         `http://localhost:8080/api/events/${id}/register?userId=${userId}&email=${encodeURIComponent(email)}`,
         null,
         { withCredentials: true }
       );
-  
+
       setEvent(res.data);
       setIsRegistered(true);
       Swal.fire({
@@ -129,16 +147,17 @@ export const EventManagementSingleView = () => {
         text: err.response?.data?.message || 'Unexpected error occurred.',
       });
     } finally {
-      setIsRegistering(false); // Stop loading
+      setIsRegistering(false);
     }
   };
-  
-  
-  
 
   const handleUnregister = async () => {
     try {
-      const res = await axios.put(`http://localhost:8080/api/events/${id}/unregister?userId=${userId}`, null, { withCredentials: true });
+      const res = await axios.put(
+        `http://localhost:8080/api/events/${id}/unregister?userId=${userId}`,
+        null,
+        { withCredentials: true }
+      );
       setEvent(res.data);
       setIsRegistered(false);
     } catch (err) {
@@ -149,12 +168,11 @@ export const EventManagementSingleView = () => {
 
   const handlePostComment = async () => {
     if (!newComment.trim()) return;
-  
-    // Get and clean name from localStorage
+
     const persistedState = JSON.parse(localStorage.getItem('persist:root'));
     const rawName = persistedState?.name;
     const username = rawName ? rawName.replace(/\\|"/g, '') : 'Anonymous';
-  
+
     try {
       await axios.post(
         `http://localhost:8080/api/events/${id}/comments`,
@@ -165,7 +183,7 @@ export const EventManagementSingleView = () => {
         },
         { withCredentials: true }
       );
-  
+
       const updatedComments = await axios.get(
         `http://localhost:8080/api/events/${id}/comments`,
         { withCredentials: true }
@@ -177,7 +195,6 @@ export const EventManagementSingleView = () => {
       Swal.fire({ icon: 'error', title: 'Post failed' });
     }
   };
-  
 
   const handleDeleteComment = async (commentId) => {
     const confirm = await Swal.fire({
@@ -199,7 +216,7 @@ export const EventManagementSingleView = () => {
             }
           }
         );
-        
+
         setComments((prev) => prev.filter(c => c.id !== commentId));
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Delete failed' });
@@ -226,7 +243,6 @@ export const EventManagementSingleView = () => {
           }
         }
       );
-      
 
       setComments(comments.map(c => c.id === editingCommentId ? res.data : c));
       setEditingCommentId(null);
@@ -241,7 +257,6 @@ export const EventManagementSingleView = () => {
   if (!event) return <div className="p-4">Loading...</div>;
 
   const isFull = event.registeredUsers.length >= event.maxParticipants;
-
   
   return (
     <div>
