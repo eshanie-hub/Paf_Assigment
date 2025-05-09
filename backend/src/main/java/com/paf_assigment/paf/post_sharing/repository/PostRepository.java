@@ -11,4 +11,9 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT p FROM Post p LEFT JOIN FETCH p.media ORDER BY p.createdAt DESC")
     List<Post> findAllPostsWithMedia();
+
+    @Query("SELECT p FROM Post p LEFT JOIN FETCH p.media WHERE p.id = :postId")
+    Post findPostWithMediaById(Long postId);
+
+    List<Post> findByAuthorId(Long authorId);
 }

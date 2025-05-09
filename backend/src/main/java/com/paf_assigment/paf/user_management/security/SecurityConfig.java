@@ -38,14 +38,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf().disable()
                 .authorizeHttpRequests(authz -> authz
-    .requestMatchers("/api/auth/**", "/api/events/**","/api/comments/**").permitAll()
-    .anyRequest().authenticated())
-
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // critical
+                                .userService(customOAuth2UserService) // 👈 critical
                         )
-                        .successHandler(oAuth2SuccessHandler) // sends JWT to frontend
+                        .successHandler(oAuth2SuccessHandler) // 👈 sends JWT to frontend
                 );
 
         return http.build();
