@@ -37,7 +37,7 @@ export const Navbar = () => {
     <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-dark ">
           <a className="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-dark text-decoration-none pb-5 pt-4">
            
-            <span class="fs-5 d-none d-sm-inline"><b>ART</b></span>
+            <span className="fs-5 d-none d-sm-inline"><b>ART</b></span>
            
         </a>
     

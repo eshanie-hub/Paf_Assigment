@@ -3,10 +3,13 @@ import axios from 'axios';
 import { Container } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 
 
 
 export const EventManagementCreate = () => {
+  const userId = useSelector((state) => state.userId);
   const [eventData, setEventData] = useState({  //eventData is a state object that holds all the form fields
     title: '',
     description: '',
@@ -18,12 +21,13 @@ export const EventManagementCreate = () => {
     maxParticipants: '',
     instructorName: '',
     instructorBio: '',
-    userId: 3, // replace this if using auth
+     
   });
   const payload = {
     ...eventData,
     registrationFee: Number(eventData.registrationFee),
     maxParticipants: Number(eventData.maxParticipants),
+    userId,
     type: eventData.type,
   link: eventData.link,
   };
@@ -112,7 +116,9 @@ export const EventManagementCreate = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:8080/api/events', payload);
+      const response = await axios.post('http://localhost:8080/api/events', payload, {
+        withCredentials: true
+      });
       Swal.fire({
         icon: 'success',
         title: 'Event created successfully!',
@@ -138,7 +144,7 @@ export const EventManagementCreate = () => {
         maxParticipants: '',
         instructorName: '',
         instructorBio: '',
-        userId: 2,
+        
       });
     } catch (error) {
       console.error('Error creating event:', error);
