@@ -30,7 +30,7 @@ export const Register = () => {
       setFormData({ username: '', email: '', password: '' });
       // Wait 1 second and then redirect
     setTimeout(() => {
-      navigate('/login');
+      navigate('/');
     }, 1000);
     } catch (error) {
       console.error(error);
