@@ -309,6 +309,7 @@ function PostForm() {
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
               placeholder="Describe your artwork..."
+              placeholder="Describe your artwork..."
               isInvalid={!!validationErrors.postText}
               required
               style={{ 
