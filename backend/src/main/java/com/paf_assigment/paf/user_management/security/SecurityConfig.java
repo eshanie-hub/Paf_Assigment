@@ -20,6 +20,7 @@ import com.paf_assigment.paf.user_management.Service.OAuth2SuccessHandler;
 
 @Configuration
 public class SecurityConfig {
+
     // Password encoder for hashing user passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,17 +36,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(Customizer.withDefaults())
-                .csrf().disable()
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService) // 👈 critical
-                        )
-                        .successHandler(oAuth2SuccessHandler) // 👈 sends JWT to frontend
-                );
+            .cors(Customizer.withDefaults()) // Enable CORS
+            .csrf().disable() // Disable CSRF for simplicity (not recommended for production)
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/api/auth/**").permitAll() // Allow unauthenticated access to auth endpoints
+                .requestMatchers("/api/posts/**").authenticated() // Require authentication for posts
+                .anyRequest().authenticated()) // Require authentication for all other requests
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService) // Use custom OAuth2 user service
+                )
+                .successHandler(oAuth2SuccessHandler) // Handle successful login
+            );
 
         return http.build();
     }
@@ -56,10 +58,10 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowedOrigins("http://localhost:3000") // Allow requests from the frontend
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow all HTTP methods
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true); // Allow cookies and credentials
             }
         };
     }

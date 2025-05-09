@@ -19,7 +19,7 @@ function PostManagementDelete() {
     const fetchPost = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`http://localhost:8080/api/posts/${id}`);
+        const response = await axios.get(`http://localhost:8080/api/posts/${id}`,{withCredentials:true} );
         setPost(response.data);
       } catch (err) {
         setError({
@@ -38,8 +38,8 @@ function PostManagementDelete() {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      await axios.delete(`http://localhost:8080/api/posts/${id}`);
-      navigate('/');
+      await axios.delete(`http://localhost:8080/api/posts/${id}`,{withCredentials:true} );
+      navigate('/pages/post_management/Home');
     } catch (err) {
       setError({
         message: err.response?.data?.message || 
@@ -100,7 +100,7 @@ function PostManagementDelete() {
             <div className="d-flex justify-content-end gap-2">
               <Button
                 variant="light"
-                onClick={() => navigate('/')}
+                onClick={() => navigate('pages/post_management/Home')}
                 className="shadow-sm"
                 style={{
                   color: textColor,

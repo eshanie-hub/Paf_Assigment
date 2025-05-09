@@ -45,7 +45,7 @@ function PostForm() {
       const fetchPostData = async () => {
         try {
           setIsLoading(true);
-          const response = await axios.get(`http://localhost:8080/api/posts/${id}`);
+          const response = await axios.get(`http://localhost:8080/api/posts/${id}`,{withCredentials: true});
           const post = response.data;
           setPostText(post.description);
           setEditingPost(post);
@@ -193,12 +193,14 @@ function PostForm() {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials:true
         });
       } else {
         await axios.post('http://localhost:8080/api/posts', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          withCredentials:true
         });
       }
 

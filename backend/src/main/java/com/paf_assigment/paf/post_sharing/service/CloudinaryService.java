@@ -65,7 +65,7 @@ public class CloudinaryService {
      * @param url The Cloudinary URL.
      * @return The public ID.
      */
-    private String extractPublicIdFromUrl(String url) {
+    public String extractPublicIdFromUrl(String url) {
         // Remove query parameters if present
         String cleanUrl = url.split("\\?")[0];
 

@@ -3,6 +3,7 @@ package com.paf_assigment.paf.post_sharing.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.paf_assigment.paf.user_management.model.UserModel;
 
 @Entity
 @Table(name = "posts")
@@ -26,64 +27,50 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Media> media;
 
-    // Pre-persist hook to set creation timestamp
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    private UserModel author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
 
-    // Pre-update hook to set update timestamp
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getVisibility() { return visibility; }
+    public void setVisibility(String visibility) { this.visibility = visibility; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getVisibility() {
-        return visibility;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setVisibility(String visibility) {
-        this.visibility = visibility;
-    }
+    public List<Media> getMedia() { return media; }
+    public void setMedia(List<Media> media) { this.media = media; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public UserModel getAuthor() { return author; }
+    public void setAuthor(UserModel author) { this.author = author; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public List<Comment> getComments() { return comments; }
+    public void setComments(List<Comment> comments) { this.comments = comments; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<Media> getMedia() {
-        return media;
-    }
-
-    public void setMedia(List<Media> media) {
-        this.media = media;
-    }
+    public List<Like> getLikes() { return likes; }
+    public void setLikes(List<Like> likes) { this.likes = likes; }
 }

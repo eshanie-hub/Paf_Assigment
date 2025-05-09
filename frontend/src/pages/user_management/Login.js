@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useDispatch } from "react-redux";
@@ -15,10 +14,10 @@ export const Login = () => {
   useEffect(() => {
     const token = searchParams.get("token");
     const username = searchParams.get("username");
+    const userId = searchParams.get("userId");
 
-    if (token && username) {
-      dispatch(setLogin({ name: username, token }));
-      alert("Google login successful");
+    if (token && username && userId) {
+      dispatch(setLogin({ name: username, token , userId}));
       navigate("/pages/post_management/Home");
     }
   }, [dispatch, navigate, searchParams]);
@@ -50,11 +49,10 @@ export const Login = () => {
         return;
       }else{
 
-      const { token, username } = response.data;
+      const { token, username, userId } = response.data;
 
      
-      dispatch(setLogin({ name: username, token: token }));
-      alert('Login Successfully');
+      dispatch(setLogin({ name: username, token: token, userId }));
       navigate('/pages/post_management/Home');
       console.log(response.data)
       }
@@ -62,11 +60,7 @@ export const Login = () => {
       console.error('Login failed:', error);
       alert('Invalid credentials or server error');
     }
-  };
-
-
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    
   };
 
   return (

@@ -62,11 +62,11 @@ export const Navbar = () => {
                     <span className="">Event Management</span>
                 </a>
             </li>
-            <li className="nav-item mb-3">
-                <a href="/pages/user_management/user_management_view" className="nav-link align-middle px-3 text-dark rounded-pill" style={{ transition: "0.3s" }}>
-                    <span className="">Profile</span>
-                </a>
-            </li>
+                    <li className="nav-item mb-3">
+            <a href="/pages/profile_management/Profile_management_view" className="nav-link align-middle px-3 text-dark rounded-pill" style={{ transition: "0.3s" }}>
+                <span className="">Profile</span>
+            </a>
+        </li>
             </ul>
         </div>
     </div>

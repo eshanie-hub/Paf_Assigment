@@ -33,7 +33,7 @@ const PostManagementView = () => {
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('http://localhost:8080/api/posts');
+      const response = await axios.get('http://localhost:8080/api/posts',{withCredentials: true});
       setPosts(response.data);
     } catch (err) {
       setError({
@@ -52,7 +52,7 @@ const PostManagementView = () => {
 
   const handleLike = async (postId) => {
     try {
-      await axios.post(`http://localhost:8080/api/posts/${postId}/like`);
+      await axios.post(`http://localhost:8080/api/posts/${postId}/like`,{withCredentials: true});
       fetchPosts();
     } catch (err) {
       setError({
@@ -62,16 +62,16 @@ const PostManagementView = () => {
   };
 
   const handleEdit = (postId) => {
-    navigate(`/pages/post_management/Post_management_update/${postId}`);
+    navigate(`/pages/post_management/Post_management_update/${postId}`,{withCredentials: true});
   };
 
   const handleDelete = (postId) => {
-    navigate(`/pages/post_management/Post_management_delete/${postId}`);
+    navigate(`/pages/post_management/Post_management_delete/${postId}`,{withCredentials: true});
   };
 
   const handleVisibility = (postId, currentVisibility) => {
     navigate(`/pages/post_management/Post_Form/${postId}`, { 
-      state: { visibility: currentVisibility } 
+      state: { visibility: currentVisibility } ,withCredentials: true
     });
   };
 
@@ -121,7 +121,7 @@ const PostManagementView = () => {
               fontWeight: '600'
             }}
             className="px-4 py-2 shadow-sm"
-            onClick={() => navigate('/pages/post_management/Post_management_create')}
+            onClick={() => navigate('/pages/post_management/Post_management_create',{withCredentials: true})}
           >
             <i className="bi bi-pencil-square me-2"></i> Create Art Post
           </Button>
